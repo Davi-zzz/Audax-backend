@@ -1,0 +1,45 @@
+services:
+
+  backend:
+    build:
+      context: .
+      dockerfile: apps/backend/Dockerfile
+      target: development
+    ports:
+      - "3001:3000"
+    volumes:
+      - ./apps/backend:/app/apps/backend
+      - backend_node:/app/apps/backend/node_modules
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/test_tech_db
+    networks:
+      - app
+
+
+  frontend:
+    build:
+      context: .
+      dockerfile: apps/frontend/Dockerfile
+      target: development
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./apps/frontend:/app/apps/frontend
+      - frontend_node:/app/apps/frontend/node_modules
+    environment:
+      NODE_ENV: development
+      NEXT_PUBLIC_API_URL: /api
+    depends_on:
+      - backend
+    networks:
+      - app
+
+volumes:
+  postgres_data:
+  frontend_node:
+  backend_node:
+
+networks:
+  app:
+    driver: bridge
