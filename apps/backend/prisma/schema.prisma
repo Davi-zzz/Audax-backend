@@ -8,11 +8,13 @@ datasource db {
 }
 
 model Product {
-  id    String @id
-  sku   String @unique
-  name  String
-  price Int
-  stock Int
+  id          String  @id
+  sku         String  @unique
+  name        String
+  description String  @default("")
+  price       Int
+  stock       Int
+  image       Bytes?
 
   @@map("products")
 }
