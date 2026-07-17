@@ -5,22 +5,34 @@
 Enunciado exige TDD com red-green-refactor **visível no histórico de commits** em "fatias verticais".
 Prazo apertado (~8h total, com partes hoje e amanhã).
 
-Aplicar red-green-refactor em *tudo* (5 use cases + VOs + errors) consumiria ~4-5 horas só de commit/test overhead.
+Aplicar red-green-refactor em *tudo* consumiria muito tempo de overhead.
 
 ## Decisão
 
-**Aplicar red-green-refactor rigoroso (separado em commits) apenas na regra de negócio central**:
-- Sku VO (validação)
-- Price VO (validação)
-- Product Entity
-- CreateProductUseCase (unicidade de SKU)
+**Aplicar red-green-refactor RIGOROSO (separado em commits) em TODAS as camadas**:
 
-**Demais casos de uso (List, Get, Update, Delete)**: test-first (teste antes de código), mas commits
-podem ser menos separados se refactor é mínimo:
-- `test: List deve retornar produtos paginados (red)` → `feat: implementa List com paginação (green)`
-- Se houver refactor óbvio (ex: extrair validação de paginação), faz commit separado; senão, bundla.
+### VOs (Value Objects)
+- Sku VO: test (red) → impl (green) → refactor
+- Price VO: test (red) → impl (green) → refactor
 
-Todos os testes são de domínio/aplicação (sem banco, sem HTTP), como o enunciado pede.
+### Entity
+- Product Entity: test (red) → impl (green)
+
+### Use Cases (cada um seu ciclo)
+- CreateProductUseCase: test (red) → impl (green)
+- ListProductsUseCase: test (red) → impl (green)
+- GetProductUseCase: test (red) → impl (green)
+- UpdateProductUseCase: test (red) → impl (green)
+- DeleteProductUseCase: test (red) → impl (green)
+
+### Adapters & Infrastructure
+- PrismaProductRepository: test (red) → impl (green)
+- ProductsController: test (red) → impl (green)
+
+### Implementação de Testes
+- Testes de domínio/aplicação usam **InMemoryProductRepository** como fake/adapter de teste
+- Controller tests usam mocks dos use cases
+- Todos os testes são **sem banco real**, sem HTTP real (conforme enunciado)
 
 ## Justificativa
 

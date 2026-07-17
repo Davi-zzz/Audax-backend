@@ -1,5 +1,13 @@
 version: '3.8'
 
+# Dual-mode Docker Compose:
+# - MODE=cache: backend uses InMemoryRepository (no Postgres)
+# - MODE=integration: backend uses PrismaRepository (with Postgres)
+#
+# Usage:
+#   MODE=cache docker-compose up
+#   MODE=integration docker-compose up
+
 services:
   postgres:
     image: postgres:16-alpine
@@ -16,6 +24,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    profiles:
+      - integration
 
 volumes:
   postgres_data:
