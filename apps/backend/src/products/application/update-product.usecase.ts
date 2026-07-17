@@ -8,6 +8,8 @@ export class UpdateProductInput {
   name: string;
   price: number;
   stock: number;
+  description?: string;
+  image?: Buffer | null;
 }
 
 @Injectable()
@@ -19,7 +21,7 @@ export class UpdateProductUseCase {
     if (!product) throw new ProductNotFoundError(input.id);
 
     const price = new Price(input.price);
-    product.update(input.name, price, input.stock);
+    product.update(input.name, price, input.stock, input.description, input.image);
     await this.productRepository.save(product);
     return product;
   }

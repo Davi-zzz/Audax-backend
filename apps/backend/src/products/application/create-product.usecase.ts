@@ -11,6 +11,8 @@ export class CreateProductInput {
   name: string;
   price: number;
   stock: number;
+  description?: string;
+  image?: Buffer | null;
 }
 
 @Injectable()
@@ -24,7 +26,7 @@ export class CreateProductUseCase {
     const existing = await this.productRepository.findBySku(sku);
     if (existing) throw new DuplicateSkuError(input.sku);
 
-    const product = new Product(input.id, sku, input.name, price, input.stock);
+    const product = new Product(input.id, sku, input.name, price, input.stock, input.description, input.image);
     await this.productRepository.save(product);
     return product;
   }
