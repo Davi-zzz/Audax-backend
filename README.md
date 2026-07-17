@@ -156,6 +156,7 @@ src/products/
 - **SKU imutável**: Após criação, não pode ser editado
 - **Preço válido**: Deve ser > 0
 - **Estoque**: Deve ser >= 0
+- **Imagens**: Persistidas como blobs (bytes) no banco; frontend envia base64, backend converte/reconverte
 
 ## Testes
 
