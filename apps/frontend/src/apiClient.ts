@@ -1,10 +1,10 @@
-import { Product, ProductFormData } from './types';
+import { Product, ProductFormData } from "./types";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
 async function imageToBase64(imageSrc: string): Promise<string | null> {
   if (!imageSrc) return null;
-  if (imageSrc.startsWith('data:')) return imageSrc.split(',')[1];
+  if (imageSrc.startsWith("data:")) return imageSrc.split(",")[1];
   try {
     const res = await fetch(imageSrc);
     const blob = await res.blob();
@@ -24,8 +24,8 @@ export const api = {
     const price = Number(data.price);
     const stock = Number(data.stock);
     const res = await fetch(`${API_URL}/products`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         id: `prod-${Date.now()}`,
         sku: data.sku.toUpperCase().trim(),
@@ -36,34 +36,45 @@ export const api = {
         image: imageBase64,
       }),
     });
-    if (!res.ok) throw new Error('Failed to create product');
+    if (!res.ok) throw new Error("Failed to create product");
     const product = await res.json();
     return {
       ...product,
-      image: product.image ? `data:application/octet-stream;base64,${product.image}` : null,
+      image: product.image
+        ? `data:application/octet-stream;base64,${product.image}`
+        : null,
     };
   },
 
-  async listProducts(page = 1, pageSize = 10): Promise<{ items: Product[]; total: number }> {
-    const res = await fetch(`${API_URL}/products?page=${page}&pageSize=${pageSize}`);
-    if (!res.ok) throw new Error('Failed to fetch products');
+  async listProducts(
+    page = 1,
+    pageSize = 10,
+  ): Promise<{ items: Product[]; total: number }> {
+    const res = await fetch(
+      `${API_URL}/products?page=${page}&pageSize=${pageSize}`,
+    );
+    if (!res.ok) throw new Error("Failed to fetch products");
     const data = await res.json();
     return {
       ...data,
       items: data.items.map((p: Product) => ({
         ...p,
-        image: p.image ? `data:application/octet-stream;base64,${p.image}` : null,
+        image: p.image
+          ? `data:application/octet-stream;base64,${p.image}`
+          : null,
       })),
     };
   },
 
   async getProduct(id: string): Promise<Product> {
     const res = await fetch(`${API_URL}/products/${id}`);
-    if (!res.ok) throw new Error('Product not found');
+    if (!res.ok) throw new Error("Product not found");
     const product = await res.json();
     return {
       ...product,
-      image: product.image ? `data:application/octet-stream;base64,${product.image}` : null,
+      image: product.image
+        ? `data:application/octet-stream;base64,${product.image}`
+        : null,
     };
   },
 
@@ -72,8 +83,8 @@ export const api = {
     const price = Number(data.price);
     const stock = Number(data.stock);
     const res = await fetch(`${API_URL}/products/${id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         name: data.name.trim(),
         description: data.description.trim(),
@@ -82,18 +93,20 @@ export const api = {
         image: imageBase64,
       }),
     });
-    if (!res.ok) throw new Error('Failed to update product');
+    if (!res.ok) throw new Error("Failed to update product");
     const product = await res.json();
     return {
       ...product,
-      image: product.image ? `data:application/octet-stream;base64,${product.image}` : null,
+      image: product.image
+        ? `data:application/octet-stream;base64,${product.image}`
+        : null,
     };
   },
 
   async deleteProduct(id: string): Promise<void> {
     const res = await fetch(`${API_URL}/products/${id}`, {
-      method: 'DELETE',
+      method: "DELETE",
     });
-    if (!res.ok) throw new Error('Failed to delete product');
+    if (!res.ok) throw new Error("Failed to delete product");
   },
 };

@@ -115,10 +115,10 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col md:flex-row font-sans" id="app-root-layout">
-      
+
       {/* SIDEBAR: Brand Navigation & Evaluator Badge */}
       <aside className="w-full md:w-64 bg-slate-900 text-slate-300 flex flex-col justify-between shrink-0 border-r border-slate-800" id="sidebar">
-        
+
         {/* Top brand portion */}
         <div>
           {/* Logo Brand Header */}
@@ -135,7 +135,7 @@ export default function Home() {
           {/* Navigation Menu Links */}
           <nav className="p-4 space-y-1.5" id="sidebar-nav">
             <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-3.5 mb-2">Painéis</p>
-            
+
             <button
               onClick={() => setActiveTab('products')}
               className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition duration-200 cursor-pointer ${
@@ -177,7 +177,7 @@ export default function Home() {
               </p>
             </div>
           </div>
-          
+
           <div className="text-center text-[10px] text-slate-500 flex items-center justify-center gap-1">
             <span>Desenvolvido com</span>
             <Heart className="w-3 h-3 text-rose-500 fill-rose-500" />
@@ -188,7 +188,7 @@ export default function Home() {
 
       {/* MAIN VIEW AREA: Header & Switchable Tabs */}
       <main className="flex-1 flex flex-col min-w-0" id="main-content">
-        
+
         {/* TOP STATUS BAR */}
         <header className="bg-white border-b border-slate-100 px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4 shrink-0" id="top-bar">
           <div>
@@ -206,8 +206,8 @@ export default function Home() {
               )}
             </h2>
             <p className="text-xs text-slate-400">
-              {activeTab === 'products' 
-                ? 'Insira novos produtos, pesquise no catálogo ou edite itens em tempo real.' 
+              {activeTab === 'products'
+                ? 'Insira novos produtos, pesquise no catálogo ou edite itens em tempo real.'
                 : 'Decisões arquiteturais, justificativas e pilares de validação do teste técnico.'}
             </p>
           </div>
@@ -223,10 +223,10 @@ export default function Home() {
 
         {/* COMPONENT ROUTER PANEL CONTAINER */}
         <div className="flex-1 p-6 overflow-y-auto max-w-7xl w-full mx-auto" id="view-panel-container">
-          
+
           {activeTab === 'products' ? (
             <div className="space-y-6 animate-fade-in" id="products-tab-view">
-              
+
               {/* Stat Summary Cards Bento Row */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4" id="stats-dashboard-grid">
                 {/* Total SKUs */}
@@ -280,10 +280,10 @@ export default function Home() {
 
               {/* Main Dual Column split: Form left, List right */}
               <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
-                
+
                 {/* Form column (4 units wide) */}
                 <div className="xl:col-span-4" id="form-section-wrapper">
-                  <ProductForm 
+                  <ProductForm
                     onSubmit={handleFormSubmit}
                     editingProduct={editingProduct}
                     onCancelEdit={handleCancelEdit}
@@ -293,7 +293,7 @@ export default function Home() {
 
                 {/* Catalog List column (8 units wide) */}
                 <div className="xl:col-span-8" id="list-section-wrapper">
-                  <ProductList 
+                  <ProductList
                     products={products}
                     onEdit={handleEditSelect}
                     onDelete={handleDeleteProduct}
