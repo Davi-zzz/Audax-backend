@@ -1,5 +1,10 @@
 # ADR-0006: UseCase Pattern + Docker Dual-Mode (Cache vs. Integration)
 
+> **Status:** parcialmente substituída. A seção "Docker Dual-Mode" (variável `MODE` em um
+> único compose) não foi implementada dessa forma — evoluiu para dois arquivos compose
+> (`docker-compose-dev.yml` / `docker-compose-prd.yml`), ver [[0007-docker-compose-dev-prd]].
+> A seção "UseCase Pattern" permanece válida.
+
 ## Contexto
 
 O teste técnico pede hexagonal architecture com casos de uso. Em NestJS, há potencial duplicação:

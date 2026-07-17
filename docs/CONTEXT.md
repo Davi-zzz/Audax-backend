@@ -19,6 +19,9 @@
    re-validação de unicidade em updates e manter identidade estável do produto.
 
 3. **Preço Válido**: preço deve ser > 0 (em centavos).
+   > Débito conhecido: a implementação atual valida apenas `> 0` (o VO aceita decimais) e o
+   > frontend envia reais com casas decimais. Em modo prisma a coluna `Int` rejeitaria
+   > decimais. Registrado na [ADR-0007](./adr/0007-docker-compose-dev-prd.md).
 
 4. **Estoque Válido**: estoque deve ser >= 0.
 
@@ -37,11 +40,12 @@
 
 ## Stack Confirmado
 
-- **Monorepo**: pnpm workspaces
+- **Monorepo**: pnpm workspaces (pnpm 10.34.5 pinado via `packageManager`)
 - **Backend**: NestJS + TypeScript + Jest
-- **Frontend**: Next.js 14+ (App Router) + TypeScript
-- **Persistência**: Prisma (Postgres via Docker Compose para dev)
+- **Frontend**: Next.js (App Router) + TypeScript + Tailwind CSS v4
+- **Persistência**: dois adapters — in-memory (default) e Prisma/Postgres (`REPOSITORY_TYPE=prisma`)
 - **Testes de domínio/aplicação**: Jest (sem banco, sem HTTP)
+- **Execução**: Docker Compose com fluxos dev e prd separados (proxy `/api` no Next)
 
 ## Decisões de Design Registradas
 
@@ -50,3 +54,5 @@
 - [ADR-0003](./adr/0003-persistence-strategy.md) — in-memory + Postgres (dois adapters)
 - [ADR-0004](./adr/0004-sku-immutability.md) — SKU imutável após criação
 - [ADR-0005](./adr/0005-tdd-scope.md) — escopo rigoroso de red-green-refactor
+- [ADR-0006](./adr/0006-usecases-and-docker-modes.md) — UseCase pattern (seção Docker substituída pela 0007)
+- [ADR-0007](./adr/0007-docker-compose-dev-prd.md) — compose dev/prd, proxy /api, toolchain pinada
