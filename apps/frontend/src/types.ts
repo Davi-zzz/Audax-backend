@@ -4,7 +4,8 @@ export interface Product {
   name: string;
   description: string;
   stock: number;
-  image: string; // Base64 data URL or preset URL
+  price: number;
+  image: string | null;
   createdAt: string;
 }
 
