@@ -10,7 +10,7 @@ describe('PrismaProductRepository', () => {
   beforeEach(() => {
     prismaClient = {
       product: {
-        create: jest.fn(),
+        upsert: jest.fn(),
         findUnique: jest.fn(),
         findMany: jest.fn(),
         update: jest.fn(),
@@ -23,7 +23,7 @@ describe('PrismaProductRepository', () => {
   it('should save product', async () => {
     const product = new Product('1', new Sku('SKU1'), 'Laptop', new Price(99900), 10);
     await repository.save(product);
-    expect(prismaClient.product.create).toHaveBeenCalled();
+    expect(prismaClient.product.upsert).toHaveBeenCalled();
   });
 
   it('should find product by id', async () => {

@@ -35,7 +35,7 @@ describe('ProductsController', () => {
 
   it('should list products', async () => {
     await controller.create({ sku: 'SKU1', name: 'Laptop', price: 99900, stock: 10 });
-    const result = await controller.list({ page: 1, pageSize: 10 });
+    const result = await controller.list(1, 10);
     expect(result.items).toHaveLength(1);
   });
 });
