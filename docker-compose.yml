@@ -1,14 +1,15 @@
 version: '3.8'
 
 # Dual-mode Docker Compose:
-# - MODE=cache: backend uses InMemoryRepository (no Postgres)
-# - MODE=integration: backend uses PrismaRepository (with Postgres)
+# - MODE=cache: InMemoryRepository, no Postgres
+# - MODE=integration: PrismaRepository with Postgres
 #
 # Usage:
 #   MODE=cache docker-compose up
 #   MODE=integration docker-compose up
 
 services:
+  # Postgres (only in integration mode)
   postgres:
     image: postgres:16-alpine
     environment:
@@ -27,5 +28,50 @@ services:
     profiles:
       - integration
 
+  # Backend (NestJS)
+  backend:
+    build:
+      context: .
+      dockerfile: apps/backend/Dockerfile
+    ports:
+      - '3001:3000'
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      REPOSITORY_TYPE: ${MODE:-cache}
+      DATABASE_URL: ${MODE:+postgresql://postgres:postgres@postgres:5432/test_tech_db}
+    depends_on:
+      postgres:
+        condition: service_healthy
+        required: ${MODE:+true}
+    profiles:
+      - cache
+      - integration
+    networks:
+      - app
+
+  # Frontend (Next.js)
+  frontend:
+    build:
+      context: .
+      dockerfile: apps/frontend/Dockerfile
+    ports:
+      - '3000:3000'
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      NEXT_PUBLIC_API_URL: http://backend:3000
+    depends_on:
+      - backend
+    profiles:
+      - cache
+      - integration
+    networks:
+      - app
+
 volumes:
   postgres_data:
+
+networks:
+  app:
+    driver: bridge

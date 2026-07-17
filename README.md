@@ -24,35 +24,65 @@ cp apps/backend/.env.example apps/backend/.env
 
 ## Execução
 
-### Modo Cache (in-memory, sem banco)
+### Modo Local (pnpm, sem Docker)
+
+#### Cache (in-memory, sem banco)
 
 ```bash
-# Backend (porta 3000)
+# Terminal 1: Backend (porta 3001)
 pnpm --filter backend start:dev
 
-# Frontend (porta 3001)
+# Terminal 2: Frontend (porta 3000)
 pnpm --filter frontend dev
 ```
 
-**Ideal para**: desenvolvimento rápido, testes unitários, sem setup de BD.
-
-### Modo Integração (Postgres via Docker)
+#### Integração (Postgres via Docker)
 
 ```bash
 # Subir Postgres
-docker-compose --profile integration up -d
+docker-compose --profile integration up -d postgres
 
 # Rodar migrations Prisma
 pnpm --filter backend prisma migrate dev
 
-# Backend (porta 3000)
-pnpm --filter backend start:dev
+# Terminal 1: Backend (porta 3001)
+REPOSITORY_TYPE=prisma pnpm --filter backend start:dev
 
-# Frontend (porta 3001)
+# Terminal 2: Frontend (porta 3000)
 pnpm --filter frontend dev
 ```
 
-**Ideal para**: testes de integração, simulação de produção.
+### Modo Docker (Containers)
+
+#### Cache (sem Postgres)
+
+```bash
+MODE=cache docker-compose up
+```
+
+- Frontend: http://localhost:3000
+- Backend: http://localhost:3001
+
+#### Integração (com Postgres)
+
+```bash
+MODE=integration docker-compose up
+```
+
+- Frontend: http://localhost:3000
+- Backend: http://localhost:3001
+- Postgres: localhost:5432
+
+Migrations rodam automaticamente (se configurado).
+
+### Resumo
+
+| Modo | Usar | Setup |
+|------|------|-------|
+| **Local Cache** | Dev rápido, sem BD | `pnpm --filter backend start:dev` |
+| **Local Integração** | Testes com BD real | Postgres local + migrations |
+| **Docker Cache** | CI/testes containerizados | `MODE=cache docker-compose up` |
+| **Docker Integração** | Produção/staging | `MODE=integration docker-compose up` |
 
 ## Testes
 
