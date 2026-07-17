@@ -1,87 +1,71 @@
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { 
-  Package, 
-  BookOpen, 
-  LayoutDashboard, 
-  Boxes, 
-  ShieldCheck, 
-  FileCode, 
-  TrendingUp, 
+import {
+  Package,
+  BookOpen,
+  LayoutDashboard,
+  Boxes,
+  ShieldCheck,
+  FileCode,
+  TrendingUp,
   AlertTriangle,
   User,
   Heart
 } from 'lucide-react';
 import { Product, ProductFormData, ActiveTab } from '../types';
-import { INITIAL_PRODUCTS } from '../initialData';
 import ProductForm from '../components/ProductForm';
 import ProductList from '../components/ProductList';
 import Documentation from '../components/Documentation';
+import { api } from '../apiClient';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('products');
   const [products, setProducts] = useState<Product[]>([]);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  // Load products from localStorage on mount safely checking for window (SSR safe in Next.js)
+  // Load products from API on mount
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('product_catalog_technical_test');
-      if (stored) {
-        try {
-          setProducts(JSON.parse(stored));
-        } catch (e) {
-          console.error('Error parsing stored products, resetting to initial', e);
-          setProducts(INITIAL_PRODUCTS);
-        }
-      } else {
-        setProducts(INITIAL_PRODUCTS);
+    const loadProducts = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const result = await api.listProducts(1, 100);
+        setProducts(result.items || []);
+      } catch (err) {
+        console.error('Failed to load products:', err);
+        setError('Falha ao carregar produtos. Tente novamente.');
+      } finally {
+        setLoading(false);
       }
-    }
+    };
+    loadProducts();
   }, []);
 
-  // Save products to localStorage on update
-  const saveProducts = (updatedProducts: Product[]) => {
-    setProducts(updatedProducts);
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('product_catalog_technical_test', JSON.stringify(updatedProducts));
-    }
-  };
-
   // Handle addition or updates
-  const handleFormSubmit = (formData: ProductFormData) => {
-    const stockNum = parseInt(formData.stock, 10) || 0;
+  const handleFormSubmit = async (formData: ProductFormData) => {
+    try {
+      setLoading(true);
+      setError(null);
 
-    if (editingProduct) {
-      // Editing Mode
-      const updated = products.map((p) => {
-        if (p.id === editingProduct.id) {
-          return {
-            ...p,
-            sku: formData.sku.toUpperCase().trim(),
-            name: formData.name.trim(),
-            description: formData.description.trim(),
-            stock: stockNum,
-            image: formData.image,
-          };
-        }
-        return p;
-      });
-      saveProducts(updated);
-      setEditingProduct(null);
-    } else {
-      // Creating Mode
-      const newProduct: Product = {
-        id: `prod-${Date.now()}`,
-        sku: formData.sku.toUpperCase().trim(),
-        name: formData.name.trim(),
-        description: formData.description.trim(),
-        stock: stockNum,
-        image: formData.image,
-        createdAt: new Date().toISOString(),
-      };
-      saveProducts([newProduct, ...products]);
+      if (editingProduct) {
+        // Editing Mode
+        const updated = await api.updateProduct(editingProduct.id, formData);
+        setProducts(products.map((p) => (p.id === updated.id ? updated : p)));
+        setEditingProduct(null);
+      } else {
+        // Creating Mode
+        const created = await api.createProduct(formData);
+        setProducts([created, ...products]);
+      }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Erro ao salvar produto';
+      setError(message);
+      console.error('Error saving product:', err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -91,11 +75,21 @@ export default function Home() {
   };
 
   // Handle Deletion
-  const handleDeleteProduct = (id: string) => {
-    const filtered = products.filter((p) => p.id !== id);
-    saveProducts(filtered);
-    if (editingProduct?.id === id) {
-      setEditingProduct(null);
+  const handleDeleteProduct = async (id: string) => {
+    try {
+      setLoading(true);
+      setError(null);
+      await api.deleteProduct(id);
+      setProducts(products.filter((p) => p.id !== id));
+      if (editingProduct?.id === id) {
+        setEditingProduct(null);
+      }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Erro ao deletar produto';
+      setError(message);
+      console.error('Error deleting product:', err);
+    } finally {
+      setLoading(false);
     }
   };
 
