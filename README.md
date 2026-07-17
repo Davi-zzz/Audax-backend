@@ -360,8 +360,4 @@ feat: implement DeleteProductUseCase (green)
 
 Cada caso de uso, adapter, e entity tem seu ciclo red-green-refactor separado.
 
-
-
-
-
-ajusta isso aqui pro teste lá que eu tava fazendo, só remove toda
+## Para acessar mais detalhes, por favor, execute a aplicação e consulte a página de documentação, lá você terá acesso a todas as decisões e motivações.
