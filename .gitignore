@@ -12,3 +12,5 @@ build/
 *.swo
 pnpm-lock.yaml
 package-lock.json
+.claude/
+*.tsbuildinfo
