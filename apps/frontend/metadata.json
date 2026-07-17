@@ -1,0 +1,6 @@
+{
+  "name": "Cadastro de Produtos",
+  "description": "Sistema de cadastro de produtos com SKU, nome, descrição, estoque, imagem, validação em tempo real e documentação de teste técnico integrada.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
