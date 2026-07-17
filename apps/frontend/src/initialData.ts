@@ -79,90 +79,144 @@ export const DOCUMENTATION_DATA = {
   header: {
     title: "Documentação do Teste Técnico",
     description:
-      "Este documento detalha as decisões de design, escolhas arquiteturais, ferramentas utilizadas e estratégias de validação adotadas para o desenvolvimento deste projeto de cadastro de produtos.",
+      "Este documento detalha as principais decisões arquiteturais, tecnologias adotadas, desafios encontrados durante o desenvolvimento e as estratégias utilizadas para garantir uma aplicação organizada, de fácil manutenção e simples de executar em qualquer ambiente.",
   },
+
   sections: [
     {
       id: "architecture",
       title: "🏗️ Arquitetura e Decisões de Design",
       description:
-        "O projeto foi estruturado com base nas melhores práticas do React moderno utilizando TypeScript e Tailwind CSS para garantir máxima manutenibilidade, extensibilidade e desempenho.",
+        "O projeto foi estruturado buscando reproduzir práticas utilizadas em aplicações reais, priorizando organização do código, reprodutibilidade do ambiente e facilidade de manutenção.",
+
       items: [
         {
           title: "Organização Modular",
-          text: "Separação lógica clara de responsabilidades: tipos de dados em arquivo próprio (`src/types.ts`), mock de dados iniciais e presets em (`src/initialData.ts`), e componentes ricos para formulários, listas e documentação extraídos individualmente de modo a evitar arquivos gigantescos (evitando gargalos de renderização e facilitando a legibilidade).",
+          text:
+            "A aplicação foi organizada de forma modular, separando responsabilidades entre componentes, tipos, dados iniciais e regras de negócio. Arquivos como `src/types.ts` concentram as definições de tipos, enquanto `src/initialData.ts` centraliza dados estáticos utilizados pela aplicação. Essa divisão reduz o acoplamento entre funcionalidades, melhora a legibilidade e facilita futuras expansões do projeto.",
         },
+
         {
-          title: "Estética Visual Minimalista e Profissional",
-          text: "Utilização de uma paleta de cores equilibrada baseada em tons de ardósia (Slate/Charcoal) e detalhes em azul índigo vibrante. Emprego de espaços negativos generosos, cantos arredondados sutis, tipografia limpa (Inter + Space Grotesk) e transições suaves alimentadas pela biblioteca `motion` para criar uma atmosfera de aplicação SaaS premium.",
+          title: "Desenvolvimento Assistido por IA",
+          text:
+            "O Google AI Studio foi utilizado como ferramenta de apoio durante o desenvolvimento do frontend, acelerando a criação inicial da interface e de alguns componentes visuais. Apesar desse auxílio, toda a arquitetura da aplicação, organização dos componentes, modelagem dos dados, integrações, regras de negócio e refinamentos finais foram implementados manualmente, utilizando a IA apenas como acelerador de produtividade.",
         },
+
         {
-          title: "Acessibilidade e Usabilidade de Teste",
-          text: "Para facilitar a avaliação técnica sem exigir recursos externos pesados ou upload obrigatório de imagens locais, o sistema disponibiliza uma galeria de presets de imagens vetorizadas internas (SVG inline no formato Data URL). Adicionalmente, permite o upload convencional de arquivos de imagem locais.",
+          title: "Ambiente Totalmente Containerizado",
+          text:
+            "Todo o projeto foi desenvolvido para ser executado através de Docker. Essa decisão elimina diferenças entre ambientes de desenvolvimento, garante que todos utilizem exatamente as mesmas versões das dependências e simplifica a execução do projeto, permitindo inicializar toda a aplicação com poucos comandos, independentemente do sistema operacional.",
+        },
+
+        {
+          title: "Maior Desafio Técnico",
+          text:
+            "O maior desafio durante o desenvolvimento não foi a implementação das funcionalidades, mas sim o alinhamento da infraestrutura entre frontend e backend. Foi necessário configurar corretamente Docker, PNPM, compartilhamento de dependências, comunicação entre containers, variáveis de ambiente e scripts de execução para que todo o ecossistema funcionasse de forma consistente.",
         },
       ],
     },
+
     {
       id: "state",
       title: "⚡ Gerenciamento de Estado e Persistência",
       description:
-        "Como se trata de um teste de interface cliente-side responsivo, as escolhas de estado priorizaram a reatividade e a persistência sem infraestrutura complexa.",
+        "Como se trata de um teste focado na experiência do usuário e na camada cliente, as escolhas priorizaram simplicidade, previsibilidade e persistência sem depender de infraestrutura adicional.",
+
       items: [
         {
-          title: "Sincronização com LocalStorage",
-          text: "Os produtos cadastrados e editados são persistidos em tempo de execução no `localStorage` do navegador. Isso garante que as ações de adição, exclusão e alteração sobrevivam a recarregamentos de página (F5), simulando o comportamento de um banco de dados real.",
+          title: "Persistência utilizando LocalStorage",
+          text:
+            "Os produtos cadastrados são armazenados no `localStorage`, permitindo que todas as alterações permaneçam disponíveis mesmo após recarregar a página. Essa abordagem simula uma persistência simples sem exigir banco de dados para execução do projeto.",
         },
+
         {
-          title: "Fluxo de Dados Unidirecional Claro",
-          text: "O componente pai centraliza as operações de mutação (create, update, delete, search) e distribui as ações para os componentes filhos através de propriedades e callbacks bem tipados no TypeScript, mantendo a previsibilidade do estado.",
+          title: "Fluxo de Dados Unidirecional",
+          text:
+            "As operações de criação, edição, remoção e pesquisa permanecem centralizadas no componente principal, enquanto os componentes filhos recebem apenas as propriedades necessárias e callbacks tipados, mantendo previsibilidade e reduzindo efeitos colaterais.",
         },
+
         {
           title: "Estados Inteligentes de Edição",
-          text: "O formulário de cadastro assume dinamicamente o modo de edição quando um produto da lista é selecionado, preenchendo todos os campos, habilitando validações correspondentes e alterando o rótulo do botão principal de forma fluida.",
+          text:
+            "Ao selecionar um produto, o formulário alterna automaticamente para modo de edição, preenchendo todos os campos, preservando as validações existentes e adaptando dinamicamente a interface para refletir o contexto da operação.",
         },
       ],
     },
+
     {
       id: "validation",
       title: "🔍 Validação em Tempo Real",
       description:
-        "A validação em tempo real é um dos pilares de UX deste projeto, prevenindo erros de entrada antes mesmo que o usuário tente submeter o formulário.",
+        "A validação foi implementada para fornecer feedback imediato ao usuário, reduzindo erros antes mesmo do envio do formulário.",
+
       items: [
         {
-          title: "Validação Dinâmica por Campo (On-Change / On-Blur)",
-          text: "As regras são avaliadas instantaneamente conforme o usuário digita. O sistema disponibiliza alertas táteis visuais em vermelho (erros) e verde (confirmações), além de desabilitar o botão de submissão caso haja qualquer inconsistência ativa.",
+          title: "Validação Dinâmica",
+          text:
+            "Todas as regras são executadas durante a digitação (onChange) e ao perder o foco do campo (onBlur), permitindo identificar inconsistências imediatamente. Enquanto existir qualquer erro de validação, o envio do formulário permanece bloqueado.",
         },
+
         {
-          title: "Regras de Validação Implementadas",
-          text: "• SKU: Deve seguir o padrão alfanumérico com hifens (ex: TEC-102), ter no mínimo 4 caracteres, e ser globalmente único (caso o SKU já exista em outro produto, um aviso de duplicidade impede a submissão).\n• Nome do Produto: Requer no mínimo 3 caracteres para evitar nomes vagos, limitado a 50 caracteres.\n• Descrição: Mínimo de 10 caracteres para encorajar descrições ricas e informativas.\n• Estoque: Deve ser obrigatoriamente um número inteiro não negativo (maior ou igual a 0). Caracteres não numéricos ou decimais são rejeitados em tempo real.",
+          title: "Regras Implementadas",
+          text:
+            "• SKU: formato alfanumérico com hífen (ex.: TEC-102), mínimo de quatro caracteres e unicidade entre produtos.\n\n• Nome: mínimo de três caracteres e máximo de cinquenta.\n\n• Descrição: mínimo de dez caracteres.\n\n• Estoque: apenas números inteiros maiores ou iguais a zero.",
         },
+
         {
-          title: "Feedback Tátil de Validação",
-          text: "Elementos visuais interativos como ícones de checkmark (✓) e de alerta (⚠), textos de ajuda descritivos e bordas coloridas dinâmicas guiam o usuário intuitivamente pelo preenchimento perfeito.",
+          title: "Feedback Visual",
+          text:
+            "Campos inválidos recebem destaque visual através de alteração de cores, mensagens explicativas e ícones de confirmação ou alerta, permitindo que o usuário compreenda rapidamente como corrigir cada informação.",
         },
       ],
     },
+
     {
       id: "ux_ui",
       title: "✨ Tecnologias e Bibliotecas Utilizadas",
       description:
-        "As tecnologias foram selecionadas para fornecer uma experiência de desenvolvimento rápida e um produto final de alto desempenho.",
+        "A stack foi escolhida considerando desempenho, produtividade, familiaridade com as ferramentas e facilidade de manutenção do projeto.",
+
       items: [
         {
           title: "React 19 + TypeScript",
-          text: "Uso da última versão do ecossistema React com tipagem estática rigorosa para garantir segurança e autocompletar no desenvolvimento de componentes baseados em funções e hooks hooks (useState, useEffect, useMemo).",
+          text:
+            "O frontend foi desenvolvido utilizando React 19 juntamente com TypeScript para aproveitar um ecossistema consolidado aliado à segurança da tipagem estática. Essa combinação reduz erros durante o desenvolvimento, melhora a experiência com autocompletar e facilita a manutenção conforme a aplicação cresce.",
         },
+
+        {
+          title: "Docker",
+          text:
+            "Toda a aplicação é executada em containers Docker. Essa abordagem garante um ambiente consistente entre diferentes máquinas, elimina problemas relacionados à instalação manual de dependências e aproxima o fluxo de desenvolvimento de um ambiente de produção.",
+        },
+
+        {
+          title: "PNPM",
+          text:
+            "O PNPM foi escolhido como gerenciador de pacotes devido à sua velocidade de instalação, menor consumo de espaço em disco e gerenciamento mais rigoroso das dependências. Soluções como Nx ou Turborepo foram consideradas, porém adicionariam uma camada de complexidade voltada principalmente para monorepositórios maiores, enquanto o PNPM oferece uma solução mais simples e adequada ao porte deste projeto.",
+        },
+
+        {
+          title: "Jest",
+          text:
+            "Os testes automatizados utilizam Jest. Apesar da existência de alternativas como o Vitest, a escolha foi motivada principalmente pela familiaridade adquirida utilizando NestJS, que possui integração nativa com essa ferramenta. Isso reduz o tempo de configuração e permite maior foco na implementação dos testes propriamente ditos.",
+        },
+
         {
           title: "Tailwind CSS v4",
-          text: "Desenvolvimento rápido de interface responsiva e utilitária, garantindo carregamento extremamente veloz e fidelidade milimétrica nos espaçamentos, sombras e transições.",
+          text:
+            "Responsável pela construção da interface através de classes utilitárias, permitindo desenvolvimento rápido, consistência visual, fácil manutenção e excelente desempenho sem necessidade de grandes folhas de estilo customizadas.",
         },
+
         {
-          title: "Motion (framer-motion)",
-          text: "Utilizado para as micro-interações do painel, surgimento suave de cartões de produto, transição de abas (menu) e alertas de validação, conferindo fluidez de nível profissional à aplicação.",
+          title: "Motion",
+          text:
+            "Utilizado para implementar microinterações e animações suaves durante a navegação, tornando a experiência do usuário mais fluida sem impactar significativamente o desempenho da aplicação.",
         },
+
         {
           title: "Lucide React",
-          text: "Uma biblioteca de ícones vetoriais modernos e consistentes que enriquecem a navbar, os campos de formulário e as listas de forma leve e esteticamente agradável.",
+          text:
+            "Biblioteca de ícones SVG utilizada para manter uma identidade visual consistente em toda a aplicação, oferecendo componentes leves, modernos e facilmente customizáveis.",
         },
       ],
     },
