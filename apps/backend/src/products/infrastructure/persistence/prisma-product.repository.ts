@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
 import { Product } from '../../domain/product.entity';
 import { ProductRepository } from '../../domain/product.repository';
 import { Sku } from '../../domain/sku.vo';
@@ -7,7 +6,7 @@ import { Price } from '../../domain/price.vo';
 
 @Injectable()
 export class PrismaProductRepository implements ProductRepository {
-  constructor(private prisma: PrismaClient) {}
+  constructor(private prisma: any) {}
 
   async save(product: Product): Promise<void> {
     await this.prisma.product.upsert({

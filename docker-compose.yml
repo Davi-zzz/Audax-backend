@@ -25,9 +25,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    profiles:
-      - integration
-
   # Backend (NestJS)
   backend:
     build:
@@ -40,13 +37,6 @@ services:
       PORT: 3000
       REPOSITORY_TYPE: ${MODE:-cache}
       DATABASE_URL: ${MODE:+postgresql://postgres:postgres@postgres:5432/test_tech_db}
-    depends_on:
-      postgres:
-        condition: service_healthy
-        required: ${MODE:+true}
-    profiles:
-      - cache
-      - integration
     networks:
       - app
 
@@ -63,9 +53,6 @@ services:
       NEXT_PUBLIC_API_URL: http://backend:3000
     depends_on:
       - backend
-    profiles:
-      - cache
-      - integration
     networks:
       - app
 

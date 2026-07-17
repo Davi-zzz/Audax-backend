@@ -21,6 +21,8 @@ async function imageToBase64(imageSrc: string): Promise<string | null> {
 export const api = {
   async createProduct(data: ProductFormData): Promise<Product> {
     const imageBase64 = await imageToBase64(data.image);
+    const price = Number(data.price);
+    const stock = Number(data.stock);
     const res = await fetch(`${API_URL}/products`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -29,8 +31,8 @@ export const api = {
         sku: data.sku.toUpperCase().trim(),
         name: data.name.trim(),
         description: data.description.trim(),
-        price: parseInt(data.price),
-        stock: parseInt(data.stock),
+        price,
+        stock,
         image: imageBase64,
       }),
     });
@@ -67,14 +69,16 @@ export const api = {
 
   async updateProduct(id: string, data: ProductFormData): Promise<Product> {
     const imageBase64 = await imageToBase64(data.image);
+    const price = Number(data.price);
+    const stock = Number(data.stock);
     const res = await fetch(`${API_URL}/products/${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         name: data.name.trim(),
         description: data.description.trim(),
-        price: parseInt(data.price),
-        stock: parseInt(data.stock),
+        price,
+        stock,
         image: imageBase64,
       }),
     });
