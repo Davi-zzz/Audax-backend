@@ -24,7 +24,7 @@ export default function ProductList({ products, onEdit, onDelete, editingId }: P
     // 1. Search filter
     if (searchTerm.trim() !== '') {
       const term = searchTerm.toLowerCase();
-      result = result.filter(p => 
+      result = result.filter(p =>
         p.name.toLowerCase().includes(term) ||
         p.sku.toLowerCase().includes(term) ||
         p.description.toLowerCase().includes(term)
@@ -191,8 +191,8 @@ export default function ProductList({ products, onEdit, onDelete, editingId }: P
               <div
                 key={product.id}
                 className={`bg-white rounded-2xl border transition-all duration-300 overflow-hidden group flex flex-col justify-between ${
-                  isEditing 
-                    ? 'border-indigo-500 ring-2 ring-indigo-50 shadow-md' 
+                  isEditing
+                    ? 'border-indigo-500 ring-2 ring-indigo-50 shadow-md'
                     : 'border-slate-100 hover:border-slate-200/80 shadow-xs hover:shadow-md'
                 }`}
                 id={`product-card-${product.id}`}
@@ -200,13 +200,13 @@ export default function ProductList({ products, onEdit, onDelete, editingId }: P
                 {/* Product Image Header */}
                 <div className="aspect-video bg-slate-50 relative flex items-center justify-center overflow-hidden border-b border-slate-100/50">
                   <img
-                    src={product.image}
+                    src={product.image || "/assets/default.png"}
                     alt={product.name}
                     className="w-full h-full object-cover group-hover:scale-103 transition duration-500"
                     referrerPolicy="no-referrer"
                     id={`product-image-${product.id}`}
                   />
-                  
+
                   {/* SKU Overlay */}
                   <div className="absolute top-3 left-3 flex items-center gap-1 bg-slate-900/90 backdrop-blur-md text-white py-1 px-2.5 rounded-lg text-[10px] font-mono tracking-wider font-semibold shadow-xs">
                     <Tag className="w-3 h-3 text-indigo-400" />
@@ -281,8 +281,8 @@ export default function ProductList({ products, onEdit, onDelete, editingId }: P
             {searchTerm ? 'Nenhum produto corresponde à busca' : 'Nenhum produto cadastrado'}
           </h3>
           <p className="text-xs text-slate-400 max-w-sm mx-auto leading-relaxed">
-            {searchTerm 
-              ? 'Tente ajustar os termos de pesquisa ou remover as pílulas de filtros selecionadas.' 
+            {searchTerm
+              ? 'Tente ajustar os termos de pesquisa ou remover as pílulas de filtros selecionadas.'
               : 'Comece preenchendo o formulário ao lado para cadastrar seu primeiro item no catálogo.'}
           </p>
           {searchTerm && (

@@ -35,7 +35,7 @@ export class ProductsController {
 
   @Get()
   async list(@Query('page') page = 1, @Query('pageSize') pageSize = 10) {
-    const result = await this.listProductsUseCase.execute({ page, pageSize });
+    const result = await this.listProductsUseCase.execute({ page: +page, pageSize: +pageSize });
     return {
       items: result.items.map(p => this.toDTO(p)),
       total: result.total,
