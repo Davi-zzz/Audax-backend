@@ -12,7 +12,7 @@ import { PrismaService } from '../prisma.service';
 const repositoryFactory = (prisma: PrismaService) => {
   const mode = process.env.REPOSITORY_TYPE || 'in-memory';
   if (mode === 'prisma') {
-    return new PrismaProductRepository(prisma as any);
+    return new PrismaProductRepository(prisma);
   }
   return new InMemoryProductRepository();
 };

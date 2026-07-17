@@ -3,10 +3,11 @@ import { Product } from '../../domain/product.entity';
 import { ProductRepository } from '../../domain/product.repository';
 import { Sku } from '../../domain/sku.vo';
 import { Price } from '../../domain/price.vo';
+import { PrismaService } from '../../../prisma.service';
 
 @Injectable()
 export class PrismaProductRepository implements ProductRepository {
-  constructor(private prisma: any) {}
+  constructor(private prisma: PrismaService) {}
 
   async save(product: Product): Promise<void> {
     await this.prisma.product.upsert({
