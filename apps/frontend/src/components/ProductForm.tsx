@@ -12,7 +12,7 @@ interface ProductFormProps {
 
 export default function ProductForm({ onSubmit, editingProduct, onCancelEdit, products }: ProductFormProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  
+
   // Base form state
   const [formData, setFormData] = useState<ProductFormData>({
     sku: '',
@@ -20,6 +20,7 @@ export default function ProductForm({ onSubmit, editingProduct, onCancelEdit, pr
     description: '',
     stock: '',
     image: IMAGE_PRESETS[0].svgUrl, // Default to first preset
+    price: ''
   });
 
   // Validation States
@@ -35,12 +36,13 @@ export default function ProductForm({ onSubmit, editingProduct, onCancelEdit, pr
         name: editingProduct.name,
         description: editingProduct.description,
         stock: editingProduct.stock.toString(),
-        image: editingProduct.image,
+        image: editingProduct.image ?? IMAGE_PRESETS[0].svgUrl,
+        price: editingProduct.price.toString()
       });
       // Clear errors on load of existing valid product
       setErrors({});
-      setSuccess({ sku: true, name: true, description: true, stock: true });
-      setTouched({ sku: true, name: true, description: true, stock: true });
+      setSuccess({ sku: true, name: true, description: true, stock: true, price: true });
+      setTouched({ sku: true, name: true, description: true, stock: true, price: true });
     } else {
       resetForm();
     }
@@ -130,6 +132,21 @@ export default function ProductForm({ onSubmit, editingProduct, onCancelEdit, pr
         }
         break;
       }
+      case 'price': {
+        const trimmed = value.trim();
+        const num = Number(trimmed);
+        if (trimmed === '') {
+          newErrors.price = 'O preço é obrigatório.';
+          delete newSuccess.price;
+        } else if (isNaN(num) || num <= 0) {
+          newErrors.price = 'O preço deve ser maior que zero.';
+          delete newSuccess.price;
+        } else {
+          delete newErrors.price;
+          newSuccess.price = true;
+        }
+        break;
+      }
     }
 
     setErrors(newErrors);
@@ -174,6 +191,13 @@ export default function ProductForm({ onSubmit, editingProduct, onCancelEdit, pr
       else currentSuccess.stock = true;
     }
 
+    // Price
+    const priceTrimmed = dataToValidate.price.trim();
+    const priceNum = Number(priceTrimmed);
+    if (priceTrimmed === '') currentErrors.price = 'O preço é obrigatório.';
+    else if (isNaN(priceNum) || priceNum <= 0) currentErrors.price = 'O preço deve ser maior que zero.';
+    else currentSuccess.price = true;
+
     return { currentErrors, currentSuccess };
   };
 
@@ -181,7 +205,7 @@ export default function ProductForm({ onSubmit, editingProduct, onCancelEdit, pr
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     const formattedValue = name === 'sku' ? value.toUpperCase() : value;
-    
+
     const updatedForm = { ...formData, [name]: formattedValue };
     setFormData(updatedForm);
     setTouched(prev => ({ ...prev, [name]: true }));
@@ -232,6 +256,7 @@ export default function ProductForm({ onSubmit, editingProduct, onCancelEdit, pr
       description: '',
       stock: '',
       image: IMAGE_PRESETS[0].svgUrl,
+      price: '',
     });
     setErrors({});
     setSuccess({});
@@ -241,9 +266,9 @@ export default function ProductForm({ onSubmit, editingProduct, onCancelEdit, pr
   // Handle Submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Mark all as touched
-    const allTouched = { sku: true, name: true, description: true, stock: true };
+    const allTouched = { sku: true, name: true, description: true, stock: true, price: true };
     setTouched(allTouched);
 
     const { currentErrors, currentSuccess } = runAllValidations(formData);
@@ -461,13 +486,52 @@ export default function ProductForm({ onSubmit, editingProduct, onCancelEdit, pr
             <p className="mt-1 text-xs text-rose-500 font-medium" id="stock-error">{errors.stock}</p>
           )}
         </div>
+        <div>
+          <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1 flex items-center justify-between">
+            <span>Preço</span>
+            {touched.price && (
+              errors.price ? (
+                <span className="text-[10px] font-medium text-rose-500 flex items-center gap-0.5 normal-case tracking-normal">
+                  <AlertCircle className="w-3 h-3" />
+                  Inválido
+                </span>
+              ) : success.price ? (
+                <span className="text-[10px] font-medium text-emerald-500 flex items-center gap-0.5 normal-case tracking-normal">
+                  <CheckCircle2 className="w-3 h-3" />
+                  Pronto
+                </span>
+              ) : null
+            )}
+          </label>
+          <input
+            type="number"
+            name="price"
+            step="any"
+            min="0.01"
+            value={formData.price}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            placeholder="Valor $:"
+            className={`w-full px-3 py-2 text-sm bg-slate-50/60 rounded-xl border transition-all duration-200 focus:outline-hidden focus:ring-2 ${
+              touched.price && errors.price
+                ? 'border-rose-300 focus:border-rose-400 focus:ring-rose-100/50 text-rose-900 bg-rose-50/20'
+                : touched.price && success.price
+                ? 'border-emerald-200 focus:border-emerald-400 focus:ring-emerald-100/50 bg-emerald-50/5'
+                : 'border-slate-200 focus:border-indigo-400 focus:ring-indigo-100/50 text-slate-800'
+            }`}
+            id="price-input"
+          />
+          {touched.price && errors.price && (
+            <p className="mt-1 text-xs text-rose-500 font-medium" id="price-error">{errors.price}</p>
+          )}
+        </div>
 
         {/* Imagem do Item */}
         <div>
           <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">
             Imagem do Item
           </label>
-          
+
           <div className="grid grid-cols-5 gap-3 items-center mb-3">
             {/* Preview Box */}
             <div className="col-span-2 aspect-square rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center overflow-hidden relative group">
