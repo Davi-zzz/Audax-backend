@@ -7,9 +7,19 @@ services:
       target: production
     ports:
       - "3001:3000"
+    volumes:
+      - ./apps/backend:/app/apps/backend
+      - backend_node:/app/apps/backend/node_modules
     environment:
       NODE_ENV: production
       DATABASE_URL: postgresql://postgres:postgres@postgres:5432/test_tech_db
+      SEED_MODE: "true"
+      REPOSITORY_TYPE: "prisma"
+    networks:
+      - app
+    depends_on:
+      postgres:
+        condition: service_healthy
 
 
   frontend:
@@ -17,17 +27,41 @@ services:
       context: .
       dockerfile: apps/frontend/Dockerfile
       target: production
-      args:
-        NEXT_PUBLIC_API_URL: /api
     ports:
       - "3000:3000"
+    volumes:
+      - ./apps/frontend:/app/apps/frontend
+      - frontend_node:/app/apps/frontend/node_modules
     environment:
       NODE_ENV: production
+      NEXT_PUBLIC_API_URL: /api
     depends_on:
       - backend
+    networks:
+      - app
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: products-postgres
+    restart: unless-stopped
+    healthcheck:
+       test: ["CMD-SHELL", "pg_isready -U postgres"]
+       interval: 5s
+       timeout: 5s
+       retries: 10
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: products
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
 volumes:
   postgres_data:
+  frontend_node:
+  backend_node:
 
 networks:
   app:
