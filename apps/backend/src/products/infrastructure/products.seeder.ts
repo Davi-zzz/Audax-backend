@@ -1,4 +1,4 @@
-import { Injectable, Logger, OnApplicationBootstrap } from "@nestjs/common";
+import { Inject, Injectable, Logger, OnApplicationBootstrap } from "@nestjs/common";
 import { CreateProductUseCase } from "../application/create-product.usecase";
 import { ProductRepository } from "../domain/product.repository";
 import { randomUUID } from "crypto";
@@ -9,8 +9,13 @@ export class ProductsSeeder implements OnApplicationBootstrap {
 
   constructor(
     private readonly createProduct: CreateProductUseCase,
+    @Inject('ProductRepository')
     private readonly repository: ProductRepository,
-  ) {}
+  ) {
+    this.logger.warn('🚀 ProductsSeeder started');
+    this.logger.warn(`SEED_DEMO=${process.env.SEED_DEMO}`);
+    this.logger.warn(`REPOSITORY_TYPE=${process.env.REPOSITORY_TYPE}`);
+  }
 
   async onApplicationBootstrap(): Promise<void> {
     if (process.env.SEED_DEMO !== "true") {

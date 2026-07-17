@@ -1,17 +1,18 @@
-import { Module } from '@nestjs/common';
-import { ProductsController } from './infrastructure/http/products.controller';
-import { CreateProductUseCase } from './application/create-product.usecase';
-import { ListProductsUseCase } from './application/list-products.usecase';
-import { GetProductUseCase } from './application/get-product.usecase';
-import { UpdateProductUseCase } from './application/update-product.usecase';
-import { DeleteProductUseCase } from './application/delete-product.usecase';
-import { InMemoryProductRepository } from './infrastructure/persistence/in-memory-product.repository';
-import { PrismaProductRepository } from './infrastructure/persistence/prisma-product.repository';
-import { PrismaService } from '../prisma.service';
+import { Module } from "@nestjs/common";
+import { ProductsController } from "./infrastructure/http/products.controller";
+import { CreateProductUseCase } from "./application/create-product.usecase";
+import { ListProductsUseCase } from "./application/list-products.usecase";
+import { GetProductUseCase } from "./application/get-product.usecase";
+import { UpdateProductUseCase } from "./application/update-product.usecase";
+import { DeleteProductUseCase } from "./application/delete-product.usecase";
+import { InMemoryProductRepository } from "./infrastructure/persistence/in-memory-product.repository";
+import { PrismaProductRepository } from "./infrastructure/persistence/prisma-product.repository";
+import { PrismaService } from "../prisma.service";
+import { ProductsSeeder } from "./infrastructure/products.seeder";
 
 const repositoryFactory = (prisma: PrismaService) => {
-  const mode = process.env.REPOSITORY_TYPE || 'in-memory';
-  if (mode === 'prisma') {
+  const mode = process.env.REPOSITORY_TYPE || "in-memory";
+  if (mode === "prisma") {
     return new PrismaProductRepository(prisma);
   }
   return new InMemoryProductRepository();
@@ -21,35 +22,36 @@ const repositoryFactory = (prisma: PrismaService) => {
   providers: [
     PrismaService,
     {
-      provide: 'ProductRepository',
+      provide: "ProductRepository",
       useFactory: repositoryFactory,
       inject: [PrismaService],
     },
     {
       provide: CreateProductUseCase,
       useFactory: (repo) => new CreateProductUseCase(repo),
-      inject: ['ProductRepository'],
+      inject: ["ProductRepository"],
     },
     {
       provide: ListProductsUseCase,
       useFactory: (repo) => new ListProductsUseCase(repo),
-      inject: ['ProductRepository'],
+      inject: ["ProductRepository"],
     },
     {
       provide: GetProductUseCase,
       useFactory: (repo) => new GetProductUseCase(repo),
-      inject: ['ProductRepository'],
+      inject: ["ProductRepository"],
     },
     {
       provide: UpdateProductUseCase,
       useFactory: (repo) => new UpdateProductUseCase(repo),
-      inject: ['ProductRepository'],
+      inject: ["ProductRepository"],
     },
     {
       provide: DeleteProductUseCase,
       useFactory: (repo) => new DeleteProductUseCase(repo),
-      inject: ['ProductRepository'],
+      inject: ["ProductRepository"],
     },
+    ProductsSeeder,
   ],
   controllers: [ProductsController],
 })
