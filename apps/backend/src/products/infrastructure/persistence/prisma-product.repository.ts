@@ -16,6 +16,8 @@ export class PrismaProductRepository implements ProductRepository {
         name: product.name,
         price: product.price.value,
         stock: product.stock,
+        description: product.description,
+        image: product.image,
       },
       create: {
         id: product.id,
@@ -23,6 +25,8 @@ export class PrismaProductRepository implements ProductRepository {
         name: product.name,
         price: product.price.value,
         stock: product.stock,
+        description: product.description,
+        image: product.image,
       },
     });
   }
@@ -52,6 +56,6 @@ export class PrismaProductRepository implements ProductRepository {
   }
 
   private toDomain(row: any): Product {
-    return new Product(row.id, new Sku(row.sku), row.name, new Price(row.price), row.stock);
+    return new Product(row.id, new Sku(row.sku), row.name, new Price(row.price), row.stock, row.description, row.image);
   }
 }

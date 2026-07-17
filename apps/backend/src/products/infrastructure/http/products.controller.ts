@@ -22,7 +22,12 @@ export class ProductsController {
   async create(@Body() input: any) {
     const createInput: CreateProductInput = {
       id: Math.random().toString(36).substring(7),
-      ...input,
+      sku: input.sku,
+      name: input.name,
+      price: input.price,
+      stock: input.stock,
+      description: input.description,
+      image: input.image ? Buffer.from(input.image, 'base64') : null,
     };
     const product = await this.createProductUseCase.execute(createInput);
     return this.toDTO(product);
@@ -47,7 +52,14 @@ export class ProductsController {
 
   @Patch(':id')
   async update(@Param('id') id: string, @Body() input: any) {
-    const updateInput: UpdateProductInput = { id, ...input };
+    const updateInput: UpdateProductInput = {
+      id,
+      name: input.name,
+      price: input.price,
+      stock: input.stock,
+      description: input.description,
+      image: input.image ? Buffer.from(input.image, 'base64') : undefined,
+    };
     const product = await this.updateProductUseCase.execute(updateInput);
     return this.toDTO(product);
   }
@@ -62,8 +74,11 @@ export class ProductsController {
       id: product.id,
       sku: product.sku.value,
       name: product.name,
+      description: product.description,
       price: product.price.value,
       stock: product.stock,
+      image: product.image ? product.image.toString('base64') : null,
+      createdAt: product.createdAt,
     };
   }
 }
